@@ -60,14 +60,14 @@
         }
 
         .chart-box {
-            padding: 20px;
+            padding: 10px;
             border-radius: 12px;
             background-color: #f3f4f6;
         }
 
         canvas {
-            display: block;
-            height: 400px;
+            display: 100% !important;
+            height: 500px !important;
         }
 
         #datetime {
@@ -142,7 +142,7 @@
                 }]
             },
             options: {
-
+                maintainAspectRatio:false,
                 scales: {
                     x: {
                         title:{
@@ -179,6 +179,7 @@
                 }]
             },
             options: {
+                maintainAspectRatio:false,
                 scales: {
                     x: {
                         title:{

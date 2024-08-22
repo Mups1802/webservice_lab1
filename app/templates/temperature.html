@@ -124,7 +124,7 @@
         // Initialize temperature chart
         var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
         var temperatureChart = new Chart(temperatureCtx, {
-            type: 'radar',
+            type: 'line',
             data: {
                 labels: [],
                 datasets: [{
@@ -132,7 +132,7 @@
                     data: [],
                     borderColor: '#3b82f6',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    fill: false,
+                    fill: true,
                     borderWidth: 2,
                     tension: 0.4,
                     pointRadius: 3,
@@ -161,14 +161,14 @@
         // Initialize humidity chart
         var humidityCtx = document.getElementById('humidityChart').getContext('2d');
         var humidityChart = new Chart(humidityCtx, {
-            type: 'radar',
+            type: 'line',
             data: {
                 labels: [],
                 datasets: [{
                     label: 'Humidity (%)',
                     data: [],
                     borderColor: '#f97316',
-                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
                     borderWidth: 2,
                     tension: 0.4,
                     pointRadius: 3,

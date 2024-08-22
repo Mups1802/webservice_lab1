@@ -124,7 +124,7 @@
         // Initialize temperature chart
         var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
         var temperatureChart = new Chart(temperatureCtx, {
-            type: 'line',
+            type: 'radar',
             data: {
                 labels: [],
                 datasets: [{
@@ -161,7 +161,7 @@
         // Initialize humidity chart
         var humidityCtx = document.getElementById('humidityChart').getContext('2d');
         var humidityChart = new Chart(humidityCtx, {
-            type: 'pie',
+            type: 'radar',
             data: {
                 labels: [],
                 datasets: [{

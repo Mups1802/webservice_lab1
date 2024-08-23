@@ -142,19 +142,34 @@
                 }]
             },
             options: {
-                maintainAspectRatio:false,
+                maintainAspectRatio: false,
                 scales: {
                     x: {
-                        title:{
+                        title: {
                             display: true,
                             text: 'Time'
                         }
                     },
                     y: {
-                        title:{
+                        title: {
                             display: true,
-                            text: 'Temparature'
+                            text: 'Temperature'
                         }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#2b2f3a'
+                        }
+                    }
+                },
+                layout: {
+                    padding: 10
+                },
+                elements: {
+                    point: {
+                        backgroundColor: '#10b981'
                     }
                 }
             }
@@ -170,34 +185,48 @@
                     label: 'Humidity (%)',
                     data: [],
                     borderColor: '#f97316',
-                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                    backgroundColor: 'rgba(255, 153, 51, 0.1)',  // Light orange fill
                     borderWidth: 2,
                     tension: 0.4,
                     pointRadius: 3,
-                    fill:true,
+                    fill: true,
                     pointBackgroundColor: '#f97316'
                 }]
             },
             options: {
-                maintainAspectRatio:false,
+                maintainAspectRatio: false,
                 scales: {
                     x: {
-                        title:{
+                        title: {
                             display: true,
                             text: 'Time'
                         }
                     },
                     y: {
-                        title:{
+                        title: {
                             display: true,
                             text: 'Humidity'
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#2b2f3a'
+                        }
+                    }
+                },
+                layout: {
+                    padding: 10
+                },
+                elements: {
+                    point: {
+                        backgroundColor: '#10b981'
+                    }
                 }
-                    
-                
             }
         });
+
 
         // Function to fetch data from the server
         var labels = [];

@@ -29,3 +29,6 @@ class LatestTemperatureHumidityAPIView(APIView):
 def temperature_monitor(request):
     return render(request, 'temperature.html')
 
+def temperature_humidity_history(request):
+    history_data = TemperatureHumidity.objects.all().order_by('-timestamp')
+    return render(request, 'history.html', {'history_data': history_data})

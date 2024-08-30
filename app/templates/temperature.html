@@ -175,6 +175,13 @@
             }
         });
 
+        <div class ="text-center mt-4">
+            <button id="historyButton" class="btn btn-primary">View History</button>
+        </div>
+
+        document.getElementById('historyButton').addEventListener('click', function() {
+            window.location.href = 'history.html';
+        });
         // Initialize humidity chart
         var humidityCtx = document.getElementById('humidityChart').getContext('2d');
         var humidityChart = new Chart(humidityCtx, {

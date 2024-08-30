@@ -80,15 +80,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Example history data
-        var historyData = [
-            { timestamp: '2024-08-22 14:30', temperature: '24', humidity: '45' },
-            { timestamp: '2024-08-22 14:32', temperature: '25', humidity: '47' },
-            // Add more data here
-        ];
-
+        
         function populateHistoryTable() {
             var historyTable = document.getElementById('historyTable');
+            historyTable.innerHTML = '';
+
             historyData.forEach(function(item) {
                 var row = `<tr>
                     <td>${item.timestamp}</td>
@@ -99,9 +95,25 @@
             });
         }
 
+        function fetchHistoryData() {
+            $.ajax({
+                url: '/api/history/',
+                method: 'GET',
+                success: function(response) {
+                    historyData = response;
+                    populateHistoryTable();
+                },
+                error: function(error) {
+                    console.error("Error fetching history data:", error);
+                }
+            });
+        }
+
+        fetchHistoryData();
+
         // Back button functionality
         document.getElementById('backButton').addEventListener('click', function() {
-            window.location.href = 'index.html'; // Assuming your main page is named index.html
+            window.location.href = 'temperature.html'; // Assuming your main page is named index.html
         });
 
         // Populate the table on page load

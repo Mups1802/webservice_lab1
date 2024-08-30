@@ -95,15 +95,6 @@
     </style>
 </head>
 <body>
-    <header class="text-center mb-4">
-        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
-        <h1>Temperature & Humidity History</h1>
-        <form class="search-container" method="get" action="/history/">
-            <input type="date" name="date" required>
-            <input type="submit" value="Search">
-        </form>
-    </header>
-
     <div class="container mt-5">
         <table class="table table-striped">
             <thead>
@@ -118,6 +109,15 @@
             </tbody>
         </table>
     </div>
+
+    <header class="text-center mb-4">
+        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
+        <h1>Temperature & Humidity History</h1>
+        <form class="search-container" method="get" action="/history/">
+            <input type="date" name="date" required>
+            <input type="submit" value="Search">
+        </form>
+    </header>
 
     <!-- jQuery and dependencies (Bootstrap JS) -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

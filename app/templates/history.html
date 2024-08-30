@@ -106,7 +106,7 @@
 
         function fetchHistoryData() {
             $.ajax({
-                url: '/api/history/',
+                url: '/api/latest_temperaturehumidity/',
                 method: 'GET',
                 success: function(response) {
                     historyData = response;

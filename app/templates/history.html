@@ -107,37 +107,41 @@
         }
     </style>
 </head>
-
 <body>
     <header>
         <button class="back-button" onclick="window.location.href='/temperature-monitor/'">Back</button>
-        <h1>Temperature and Humidity History</h1>
+        <h1>Temperature & Humidity History</h1>
         <form class="search-container" method="get" action="/history/">
             <input type="date" name="date" value="{{ date_query }}" required>
             <input type="submit" value="Search">
         </form>
     </header>
-    <table>
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Temperature (°C)</th>
-                <th>Humidity (%)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for reading in readings %}
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ reading.timestamp }}</td>
-                    <td>{{ reading.temperature }}</td>
-                    <td>{{ reading.humidity }}</td>
+                    <th>Timestamp</th>
+                    <th>Temperature (°C)</th>
+                    <th>Humidity (%)</th>
                 </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="3">No readings available.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for reading in readings %}
+                    <tr>
+                        <td>{{ reading.timestamp }}</td>
+                        <td>{{ reading.temperature }}</td>
+                        <td>{{ reading.humidity }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No readings available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
+    </footer>
 </body>
 </html>

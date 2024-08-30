@@ -107,78 +107,37 @@
         }
     </style>
 </head>
+
 <body>
     <header>
-        <h1>Temperature & Humidity History</h1>
+        <button class="back-button" onclick="window.location.href='/temperature-monitor/'">Back</button>
+        <h1>Temperature and Humidity History</h1>
         <form class="search-container" method="get" action="/history/">
             <input type="date" name="date" value="{{ date_query }}" required>
             <input type="submit" value="Search">
         </form>
     </header>
-
-    <div class="container mt-5">
-        <table class="table table-striped">
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Temperature (°C)</th>
+                <th>Humidity (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reading in readings %}
                 <tr>
-                    <th>Timestamp</th>
-                    <th>Temperature (°C)</th>
-                    <th>Humidity (%)</th>
+                    <td>{{ reading.timestamp }}</td>
+                    <td>{{ reading.temperature }}</td>
+                    <td>{{ reading.humidity }}</td>
                 </tr>
-            </thead>
-            <tbody id="historyTable">
-                <!-- Data will be populated here -->
-                {% for reading in readings %}
-                    <tr>
-                        <td>{{ reading.timestamp }}</td>
-                        <td>{{ reading.temperature }}</td>
-                        <td>{{ reading.humidity }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3">No readings available.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <footer>
-        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
-    </footer>
-
-    <!-- jQuery and dependencies (Bootstrap JS) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        function populateHistoryTable(data) {
-            var historyTable = document.getElementById('historyTable');
-            historyTable.innerHTML = '';
-
-            data.forEach(function(item) {
-                var row = `<tr>
-                    <td>${item.timestamp}</td>
-                    <td>${item.temperature}</td>
-                    <td>${item.humidity}</td>
-                </tr>`;
-                historyTable.innerHTML += row;
-            });
-        }
-
-        function fetchHistoryData() {
-            $.ajax({
-                url: '/api/latest_temperaturehumidity/',
-                method: 'GET',
-                success: function(response) {
-                    populateHistoryTable(response);
-                },
-                error: function(error) {
-                    console.error("Error fetching history data:", error);
-                }
-            });
-        }
-
-        fetchHistoryData();
-    </script>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No readings available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

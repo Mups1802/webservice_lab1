@@ -18,6 +18,11 @@
             min-height: 100vh;
         }
 
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+
         .container {
             padding: 20px;
             border-radius: 12px;
@@ -28,7 +33,6 @@
 
         h1 {
             font-size: 26px;
-            text-align: center;
             color: #2b2f3a;
             margin-bottom: 20px;
             font-weight: bolder;
@@ -104,10 +108,10 @@
     </style>
 </head>
 <body>
-    <header class="text-center mb-4">
+    <header>
         <h1>Temperature & Humidity History</h1>
         <form class="search-container" method="get" action="/history/">
-            <input type="date" name="date" required>
+            <input type="date" name="date" value="{{ date_query }}" required>
             <input type="submit" value="Search">
         </form>
     </header>
@@ -123,6 +127,17 @@
             </thead>
             <tbody id="historyTable">
                 <!-- Data will be populated here -->
+                {% for reading in readings %}
+                    <tr>
+                        <td>{{ reading.timestamp }}</td>
+                        <td>{{ reading.temperature }}</td>
+                        <td>{{ reading.humidity }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No readings available.</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

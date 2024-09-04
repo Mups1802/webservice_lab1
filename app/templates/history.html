@@ -21,6 +21,7 @@
         header {
             text-align: center;
             padding: 20px;
+            position: relative;
         }
 
         .container {
@@ -68,9 +69,9 @@
             font-size: 1rem;
             font-weight: bolder;
             text-align: center;
-            display: block;
-            width: max-content;
-            margin: 20px auto;
+            position: absolute;
+            top: 20px;
+            left: 20px;
         }
 
         .search-container {
@@ -109,6 +110,7 @@
 </head>
 <body>
     <header>
+        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
         <h1>Temperature & Humidity History</h1>
         <form class="search-container" method="get" action="/history/">
             <input type="date" name="date" value="{{ date_query }}" required>
@@ -139,8 +141,5 @@
             </tbody>
         </table>
     </div>
-    <footer>
-        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
-    </footer>
 </body>
 </html>

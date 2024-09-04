@@ -78,6 +78,8 @@
             margin-bottom: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .search-container input[type="date"] {
@@ -102,6 +104,17 @@
             background-color: #2b6db2;
         }
 
+        .search-container .nav-btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            background-color: #3b82f6;
+            color: white;
+            font-size: 1rem;
+            font-weight: bolder;
+            text-align: center;
+            text-decoration: none;
+        }
+
         footer {
             text-align: center;
             padding: 10px;
@@ -110,13 +123,15 @@
 </head>
 <body>
     <header>
-        <a href="/temperature-monitor/" class="nav-btn">Back to Dashboard</a>
         <h1>Temperature & Humidity History</h1>
         <form class="search-container" method="get" action="/history/">
-            <input type="date" name="date" value="{{ date_query }}" required>
-            <input type="submit" value="Search">
-        </form>
+            <div class ="d-flex justify-content-center align-items-center">
+                <input type="date" name="date" value="{{ date_query }}" required>
+                <input type="submit" value="Search">
+                <a href="/temperature-monitor/" class="nav-btn">Back</a>
+            </form>
     </header>
+
     <div class="container">
         <table class="table table-striped">
             <thead>

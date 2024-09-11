@@ -5,6 +5,9 @@ from .serializer import TemperatureHumiditySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import datetime
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 class TemperatureHumidityDetailView(generics.RetrieveAPIView):
     queryset = TemperatureHumidity.objects.all()
@@ -47,3 +50,23 @@ def history_view(request):
 def save_reading(temperature, humidity):
     reading = TemperatureHumidity(temperature=temperature, humidity=humidity)
     reading.save()
+@csrf_exempt
+def relay_control_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        relay_state = data.get('relay_state', None)
+
+        if relay_state is not None:
+            # Handle the relay state logic
+            if relay_state == "true":
+                # Code to turn the relay on (you can update database or logic accordingly)
+                return JsonResponse({'message': 'Relay turned ON'}, status=200)
+            elif relay_state == "false":
+                # Code to turn the relay off
+                return JsonResponse({'message': 'Relay turned OFF'}, status=200)
+            else:
+                return JsonResponse({'error': 'Invalid relay state'}, status=400)
+        else:
+            return JsonResponse({'error': 'No relay state provided'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

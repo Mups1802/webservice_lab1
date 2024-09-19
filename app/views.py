@@ -86,10 +86,7 @@ def relay_control_view(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 def get_relay_status(request):
-    """
-    This view returns the current relay status in JSON format.
-    It responds with either "true" or "false" depending on the state.
-    """
+    
     global relay_state
 
     # Return relay status as JSON

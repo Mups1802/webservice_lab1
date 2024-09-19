@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TemperatureHumidityDetailView,  TemperatureHumidityListView, LatestTemperatureHumidityAPIView, TemperatureHumidityCreateAPIView, TemperatureHumidityCreateAPIView, temperature_monitor, history_view, relay_control_view, get_relay_status
+from .views import TemperatureHumidityDetailView,  TemperatureHumidityListView, LatestTemperatureHumidityAPIView, TemperatureHumidityCreateAPIView, temperature_monitor, history_view, relay_control_view, get_relay_status
 urlpatterns = [
     path('temperatures/', TemperatureHumidityListView.as_view(), name='temperature-list'),
     path('temperatures/<int:pk>/', TemperatureHumidityDetailView.as_view(), name='temperature-detail'),

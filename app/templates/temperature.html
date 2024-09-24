@@ -298,34 +298,97 @@
         }
 
         // Fetch data every 2 seconds
-        setInterval(fetchData, 2000);
-        function controlRelay(state) {
-            fetch('/relay-control/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}' // Ensure CSRF token is included
-                },
-                body: JSON.stringify({
-                    'relay_state': state
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message); // Display the response message (Relay ON/OFF)
-                } else if (data.error) {
-                    alert(data.error);
+        <div id="relay-control">
+            <button id="relayOnBtn" onclick="controlRelay('true')">Turn Relay ON</button>
+            <button id="relayOffBtn" onclick="controlRelay('false')">Turn Relay OFF</button>
+        </div>
+        
+        
+        <!-- Input field for command-based relay control -->
+        <div id="command-control">
+            <form id="commandForm">
+                <input type="text" id="commandInput" placeholder="Enter ON or OFF" required>
+                <button type="submit">Send Command</button>
+            </form>
+            <p id="commandStatus"></p>
+        </div>
+        
+        <script>
+                function toggleRelay(checkbox) {
+                    const state = checkbox.checked ? 'true' : 'false';
+                    fetch('/relay-control/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            'relay_state': state
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            document.getElementById('relayStatus').innerText = checkbox.checked ? 'Relay is ON' : 'Relay is OFF';
+                        } else if (data.error) {
+                            alert(data.error);
+                            checkbox.checked = !checkbox.checked;  // Revert the checkbox state
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        checkbox.checked = !checkbox.checked;  // Revert the checkbox state
+                    });
                 }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    </script>
-
-    <div id="relay-control">
-        <button id="relayOnBtn" onclick="controlRelay('true')">Turn Relay ON</button>
-        <button id="relayOffBtn" onclick="controlRelay('false')">Turn Relay OFF</button>
-    </div>
-    
+                
+                document.getElementById('commandForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const command = document.getElementById('commandInput').value.trim().toUpperCase();
+                
+                    if (command === 'ON' || command === 'OFF') {
+                        fetch('/relay-control/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                'command': command
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                document.getElementById('commandStatus').innerText = Command accepted: ${data.message};
+                                document.getElementById('relayToggle').checked = (command === 'ON');
+                                document.getElementById('relayStatus').innerText = Relay is ${command};
+                            } else if (data.error) {
+                                document.getElementById('commandStatus').innerText = Error: ${data.error};
+                            }
+                        })
+                        .catch(error => {
+                            document.getElementById('commandStatus').innerText = 'Error sending command';
+                            console.error('Error:', error);
+                        });
+                    } else {
+                        document.getElementById('commandStatus').innerText = 'Invalid command. Enter ON or OFF.';
+                    }
+                });
+                
+                // Function to fetch initial relay state
+                function fetchRelayState() {
+                    fetch('/getrelaystatus/')  // Updated to use the new endpoint
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('relayToggle').checked = data.relay_state;
+                            document.getElementById('relayStatus').innerText = Relay is ${data.relay_state ? 'ON' : 'OFF'};
+                        })
+                        .catch(error => console.error('Error fetching relay state:', error));
+                }
+                
+                // Call fetchRelayState when the page loads
+                document.addEventListener('DOMContentLoaded', fetchRelayState);
+        </script>
+  
 </body>
 </html>

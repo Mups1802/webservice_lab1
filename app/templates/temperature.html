@@ -20,6 +20,7 @@
         }
 
         .container {
+            background-color: #ffffff;
             padding: 20px;
             border-radius: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -66,8 +67,8 @@
         }
 
         canvas {
-            display: 100% !important;
-            height: 500px !important;
+            width: 100% !important;
+            height: 300px !important;
         }
 
         #datetime {
@@ -85,6 +86,25 @@
             background-color: #3b82f6;
             border-color: #3b82f6;
             font-weight: bold;
+        }
+
+        #relay-control, #command-control {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #relay-control button, #command-control button {
+            margin: 0 10px;
+        }
+
+        #commandForm {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        #commandInput {
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -122,6 +142,21 @@
         <div class="text-center mt-4">
             <button id="historyButton" class="btn btn-primary">View History</button>
         </div>
+
+        <!-- Relay Control -->
+        <div id="relay-control">
+            <button id="relayOnBtn" class="btn btn-success" onclick="controlRelay('true')">Turn Relay ON</button>
+            <button id="relayOffBtn" class="btn btn-danger" onclick="controlRelay('false')">Turn Relay OFF</button>
+        </div>
+        
+        <!-- Input field for command-based relay control -->
+        <div id="command-control">
+            <form id="commandForm">
+                <input type="text" id="commandInput" class="form-control" placeholder="Enter ON or OFF" required>
+                <button type="submit" class="btn btn-primary">Send Command</button>
+            </form>
+            <p id="commandStatus"></p>
+        </div>
     </div>
 
     <!-- jQuery and dependencies (Bootstrap JS) -->
@@ -157,9 +192,14 @@
                 }]
             },
             options: {
+                responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
                         title: {
                             display: true,
                             text: 'Time'
@@ -200,7 +240,7 @@
                     label: 'Humidity (%)',
                     data: [],
                     borderColor: '#f97316',
-                    backgroundColor: 'rgba(255, 153, 51, 0.1)',  // Light orange fill
+                    backgroundColor: 'rgba(255, 153, 51, 0.1)',
                     borderWidth: 2,
                     tension: 0.4,
                     pointRadius: 3,
@@ -209,9 +249,14 @@
                 }]
             },
             options: {
+                responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
                         title: {
                             display: true,
                             text: 'Time'
@@ -248,47 +293,41 @@
         });
 
         // Function to fetch data from the server
-        var labels = [];
-        var temperatureData = [];
-        var humidityData = [];
         function fetchData() {
             $.ajax({
                 url: '/api/latest_temperaturehumidity/',
                 method: 'GET',
                 success: function(response) {
-                    console.log("Raw API Response:", response); // Log the raw response to see what's being returned
+                    console.log("Raw API Response:", response);
                     
-                    // Generate a timestamp using the current time
-                    var timestamp = new Date().toLocaleTimeString();  // Format time for readability
-                    console.log("Generated Timestamp:", timestamp); // Debugging timestamp
-
                     if (response.temperature && response.humidity) {
-                        // Push the current timestamp and data into the arrays
-                        labels.push(timestamp);
-                        temperatureData.push(parseFloat(response.temperature));
-                        console.log("temp now: " + response.temperature);
-                        humidityData.push(parseFloat(response.humidity));
-                    } else {
-                        console.warn("Unexpected response format:", response);
-                    }
+                        var timestamp = new Date();
+                        temperatureChart.data.labels.push(timestamp);
+                        temperatureChart.data.datasets[0].data.push({
+                            x: timestamp,
+                            y: parseFloat(response.temperature)
+                        });
+                        humidityChart.data.labels.push(timestamp);
+                        humidityChart.data.datasets[0].data.push({
+                            x: timestamp,
+                            y: parseFloat(response.humidity)
+                        });
 
-                    // Update the charts if there's valid data
-                    console.log(labels.length);
-                    if (labels.length > 0) {
-                        temperatureChart.data.labels = labels;
-                        temperatureChart.data.datasets[0].data = temperatureData;
+                        // Keep only the last 10 data points
+                        if (temperatureChart.data.labels.length > 10) {
+                            temperatureChart.data.labels.shift();
+                            temperatureChart.data.datasets[0].data.shift();
+                            humidityChart.data.labels.shift();
+                            humidityChart.data.datasets[0].data.shift();
+                        }
+
                         temperatureChart.update();
-
-                        humidityChart.data.labels = labels;
-                        humidityChart.data.datasets[0].data = humidityData;
                         humidityChart.update();
 
-                        var latestTemperature = temperatureData[temperatureData.length - 1] || '--';
-                        var latestHumidity = humidityData[humidityData.length - 1] || '--';
-                        document.getElementById('temperatureValue').innerText = latestTemperature + ' °C';
-                        document.getElementById('humidityValue').innerText = latestHumidity + ' %';
+                        document.getElementById('temperatureValue').innerText = parseFloat(response.temperature).toFixed(1) + ' °C';
+                        document.getElementById('humidityValue').innerText = parseFloat(response.humidity).toFixed(1) + ' %';
                     } else {
-                        console.warn("No valid data received.");
+                        console.warn("Unexpected response format:", response);
                     }
                 },
                 error: function(error) {
@@ -297,98 +336,83 @@
             });
         }
 
-        // Fetch data every 2 seconds
-        <div id="relay-control">
-            <button id="relayOnBtn" onclick="controlRelay('true')">Turn Relay ON</button>
-            <button id="relayOffBtn" onclick="controlRelay('false')">Turn Relay OFF</button>
-        </div>
-        
-        
-        <!-- Input field for command-based relay control -->
-        <div id="command-control">
-            <form id="commandForm">
-                <input type="text" id="commandInput" placeholder="Enter ON or OFF" required>
-                <button type="submit">Send Command</button>
-            </form>
-            <p id="commandStatus"></p>
-        </div>
-        
-        <script>
-                function toggleRelay(checkbox) {
-                    const state = checkbox.checked ? 'true' : 'false';
-                    fetch('/relay-control/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({
-                            'relay_state': state
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            document.getElementById('relayStatus').innerText = checkbox.checked ? 'Relay is ON' : 'Relay is OFF';
-                        } else if (data.error) {
-                            alert(data.error);
-                            checkbox.checked = !checkbox.checked;  // Revert the checkbox state
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        checkbox.checked = !checkbox.checked;  // Revert the checkbox state
-                    });
+        // Fetch data every 5 seconds
+        setInterval(fetchData, 5000);
+
+        // Function to control relay
+        function controlRelay(state) {
+            fetch('/relay-control/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'relay_state': state
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                } else if (data.error) {
+                    alert(data.error);
                 }
-                
-                document.getElementById('commandForm').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    const command = document.getElementById('commandInput').value.trim().toUpperCase();
-                
-                    if (command === 'ON' || command === 'OFF') {
-                        fetch('/relay-control/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': '{{ csrf_token }}'
-                            },
-                            body: JSON.stringify({
-                                'command': command
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message) {
-                                document.getElementById('commandStatus').innerText = Command accepted: ${data.message};
-                                document.getElementById('relayToggle').checked = (command === 'ON');
-                                document.getElementById('relayStatus').innerText = Relay is ${command};
-                            } else if (data.error) {
-                                document.getElementById('commandStatus').innerText = Error: ${data.error};
-                            }
-                        })
-                        .catch(error => {
-                            document.getElementById('commandStatus').innerText = 'Error sending command';
-                            console.error('Error:', error);
-                        });
-                    } else {
-                        document.getElementById('commandStatus').innerText = 'Invalid command. Enter ON or OFF.';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while controlling the relay.');
+            });
+        }
+
+        // Event listener for command form
+        document.getElementById('commandForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const command = document.getElementById('commandInput').value.trim().toUpperCase();
+        
+            if (command === 'ON' || command === 'OFF') {
+                fetch('/relay-control/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'command': command
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        document.getElementById('commandStatus').innerText = `Command accepted: ${data.message}`;
+                    } else if (data.error) {
+                        document.getElementById('commandStatus').innerText = `Error: ${data.error}`;
                     }
+                })
+                .catch(error => {
+                    document.getElementById('commandStatus').innerText = 'Error sending command';
+                    console.error('Error:', error);
                 });
-                
-                // Function to fetch initial relay state
-                function fetchRelayState() {
-                    fetch('/getrelaystatus/')  // Updated to use the new endpoint
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('relayToggle').checked = data.relay_state;
-                            document.getElementById('relayStatus').innerText = Relay is ${data.relay_state ? 'ON' : 'OFF'};
-                        })
-                        .catch(error => console.error('Error fetching relay state:', error));
-                }
-                
-                // Call fetchRelayState when the page loads
-                document.addEventListener('DOMContentLoaded', fetchRelayState);
-        </script>
-  
+            } else {
+                document.getElementById('commandStatus').innerText = 'Invalid command. Enter ON or OFF.';
+            }
+        });
+
+        // Function to fetch initial relay state
+        function fetchRelayState() {
+            fetch('/getrelaystatus/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('commandStatus').innerText = `Relay is ${data.relay_state ? 'ON' : 'OFF'}`;
+                })
+                .catch(error => console.error('Error fetching relay state:', error));
+        }
+        
+        // Call fetchRelayState when the page loads
+        document.addEventListener('DOMContentLoaded', fetchRelayState);
+
+        // Initial data fetch
+        fetchData();
+    </script>
 </body>
 </html>

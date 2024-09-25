@@ -370,7 +370,7 @@
             event.preventDefault();
             const command = document.getElementById('commandInput').value.trim().toUpperCase();
         
-            if (command === 'ON' || command === 'OFF') {
+            if (command === 'MUPELWA' || command === 'CHAMA') {
                 fetch('/relay-control/', {
                     method: 'POST',
                     headers: {

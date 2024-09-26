@@ -8,8 +8,6 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Date Adapter -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
         body {
             font-family: 'Gadget', sans-serif;
@@ -196,10 +194,7 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute'
-                        },
+                        type: 'category',
                         title: {
                             display: true,
                             text: 'Time'
@@ -253,10 +248,7 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute'
-                        },
+                        type: 'category',
                         title: {
                             display: true,
                             text: 'Time'
@@ -301,17 +293,13 @@
                     console.log("Raw API Response:", response);
                     
                     if (response.temperature && response.humidity) {
-                        var timestamp = new Date();
+                        var timestamp = new Date().toLocaleTimeString();
+                        
                         temperatureChart.data.labels.push(timestamp);
-                        temperatureChart.data.datasets[0].data.push({
-                            x: timestamp,
-                            y: parseFloat(response.temperature)
-                        });
+                        temperatureChart.data.datasets[0].data.push(parseFloat(response.temperature));
+                        
                         humidityChart.data.labels.push(timestamp);
-                        humidityChart.data.datasets[0].data.push({
-                            x: timestamp,
-                            y: parseFloat(response.humidity)
-                        });
+                        humidityChart.data.datasets[0].data.push(parseFloat(response.humidity));
 
                         // Keep only the last 10 data points
                         if (temperatureChart.data.labels.length > 10) {
@@ -337,7 +325,7 @@
         }
 
         // Fetch data every 5 seconds
-        setInterval(fetchData, 2000);
+        setInterval(fetchData, 5000);
 
         // Function to control relay
         function controlRelay(state) {
